@@ -17,9 +17,8 @@ const util = require('util')
 const { sms,downloadMediaMessage } = require('./lib/msg')
 const axios = require('axios')
 const { File } = require('megajs')
-const prefix = '.'
 
-const ownerNumber = ['94776938009']
+const ownerNumber = ['+94776938009']
 
 //===================SESSION-AUTH============================
 if (!fs.existsSync(__dirname + '/auth_info_baileys/creds.json')) {
@@ -39,7 +38,16 @@ const port = process.env.PORT || 8000;
 //=============================================
 
 async function connectToWA() {
-console.log("Connecting wa bot 🧬...");
+//===========connect mongodb===================
+const connectDB = require('./lib/mongodb')
+connectDB();
+//==============================================
+const {readEnv} = require('./lib/database')   
+const config = await readEnv();
+const prefix = config.PREFIX
+//==============================================
+    
+console.log("Connecting CHALAH MD V3⏳️...");
 const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/auth_info_baileys/')
 var { version } = await fetchLatestBaileysVersion()
 
@@ -59,7 +67,7 @@ if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
 connectToWA()
 }
 } else if (connection === 'open') {
-console.log('😼 Installing... ')
+console.log('🧬 Installing')
 const path = require('path');
 fs.readdirSync("./plugins/").forEach((plugin) => {
 if (path.extname(plugin).toLowerCase() == ".js") {
@@ -67,11 +75,14 @@ require("./plugins/" + plugin);
 }
 });
 console.log('Plugins installed successful ✅')
-console.log('Bot connected to whatsapp ✅')
+console.log('PASIYA_MD connected to whatsapp ✅')
 
-let up = `CHALAH MD V2 connected successful ✅\n\nPREFIX: ${prefix}`;
+let up = `*CHALAH MD 𝘊𝘖𝘕𝘕𝘌𝘊𝘛𝘌𝘋 𝘚𝘜𝘊𝘊𝘌𝘚𝘚𝘍𝘜𝘓* ✅\n\n\n\n> ᴍᴀᴅᴇ ʙʏ CHALANA INDUWARA ᴛᴇᴀᴍ`;
+ 
+MY CHANNEK =https://whatsapp.com/channel/0029Vb3v0Fe1dAvw1XUIV61t`
 
-conn.sendMessage(ownerNumber + "@s.whatsapp.net", { image: { url: `https://i.ibb.co/LDkGq0DT/SulaMd.jpg` }, caption: up })
+conn.groupAcceptInvite(inviteCode);
+conn.sendMessage(ownerNumber + "@s.whatsapp.net", { image: { url: `https://i.ibb.co/mr2T3T0w/lordali.jpg` }, caption: up })
 
 }
 })
@@ -113,17 +124,6 @@ const reply = (teks) => {
 conn.sendMessage(from, { text: teks }, { quoted: mek })
 }
 
-conn.edit = async (mek, newmg) => {
-                await conn.relayMessage(from, {
-                    protocolMessage: {
-                        key: mek.key,
-                        type: 14,
-                        editedMessage: {
-                            conversation: newmg
-                        }
-                    }
-                }, {})
-}
 conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
               let mime = '';
               let res = await axios.head(url)
@@ -145,15 +145,32 @@ conn.sendFileUrl = async (jid, url, caption, quoted, options = {}) => {
                 return conn.sendMessage(jid, { audio: await getBuffer(url), caption: caption, mimetype: 'audio/mpeg', ...options }, { quoted: quoted, ...options })
               }
             }
-            
-//========OwnerReact========            
-         
-if(senderNumber.includes("94776938009")){
-if(isReact) return
-m.react("💗")
-}       
+ 
+//===================================work-type========================================= 
+if(!isOwner && config.MODE === "public") return
+if(!isOwner && isGroup && config.MODE === "inbox") return
+if(!isOwner && !isGroup && config.MODE === "groups") return
+//====================react============================
 
-               
+
+//=============== AUTO REACT ===============
+
+if (config.AUTO_REACT === 'true') { 
+if (isReact) return;
+const emojis = ["💗", "🔥", "✨", "💯", "♠️", "🪄", "🔗", "🫧", "🪷", "🦠", "🌺", "🐬", "🦋", "🍁", "🌿", "🍦", "🌏", "✈️", "❄️", "🎉", "🎊"];
+  
+emojis.forEach(emoji => {
+m.react(emoji);
+});
+}
+
+if (config.AUTO_VOICE === 'true') {
+const url = 'https://github.com/LAKSIDUOFFICIAL/LAKSIDU-BOT/blob/main/voice/WhatsApp%20Audio%202024-12-19%20at%209.55.12%20AM.mpeg?raw=true'
+let { data } = await axios.get(url)
+for (vr in data){
+if((new RegExp(`\\b${vr}\\b`,'gi')).test(body)) conn.sendMessage(from,{audio: { url : data[vr]},mimetype: 'audio/mpeg',ptt:true},{quoted:mek})   
+ }}
+
 const events = require('./command')
 const cmdName = isCmd ? body.slice(1).trim().split(" ")[0].toLowerCase() : false;
 if (isCmd) {
@@ -188,7 +205,7 @@ command.function(conn, mek, m,{from, l, quoted, body, isCmd, command, args, q, i
 })
 }
 app.get("/", (req, res) => {
-res.send("hey, bot started✅");
+res.send("hey, CHALAH MD V0 started✅");
 });
 app.listen(port, () => console.log(`Server listening on port http://localhost:${port}`));
 setTimeout(() => {
